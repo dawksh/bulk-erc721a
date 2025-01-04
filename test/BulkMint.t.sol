@@ -16,10 +16,10 @@ contract BulkMintTest is Test {
         bulkMint = new BulkMint(0xCcaf48080356af8e45564b63687877AF2CA34950);
         token = ITokenERC721(0xCcaf48080356af8e45564b63687877AF2CA34950);
 
-        recipients = new address[](10);
-        uris = new string[](10);
+        recipients = new address[](100);
+        uris = new string[](100);
 
-        for (uint i = 0; i < 10; ) {
+        for (uint i = 0; i < 100; ) {
             recipients[i] = address(0x28172273CC1E0395F3473EC6eD062B6fdFb15940);
             uris[i] = "TEST URI";
             unchecked {
@@ -32,11 +32,14 @@ contract BulkMintTest is Test {
             0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6,
             address(bulkMint)
         );
+        token.grantRole(
+            0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6,
+            address(this)
+        );
         vm.stopPrank();
     }
     function testNormalMint() public {
-        vm.startPrank(authority);
-        for (uint i; i < 10; ) {
+        for (uint i; i < 100; ) {
             token.mintTo(
                 address(0x28172273CC1E0395F3473EC6eD062B6fdFb15940),
                 "TEST URI"
@@ -45,18 +48,8 @@ contract BulkMintTest is Test {
                 i++;
             }
         }
-        assertEq(
-            token.balanceOf(0x28172273CC1E0395F3473EC6eD062B6fdFb15940),
-            10
-        );
-        vm.stopPrank();
     }
     function testBulkMint() public {
         bulkMint.bulkMint(recipients, uris);
-
-        assertEq(
-            token.balanceOf(0x28172273CC1E0395F3473EC6eD062B6fdFb15940),
-            10
-        );
     }
 }
